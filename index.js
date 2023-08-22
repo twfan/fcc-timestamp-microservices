@@ -57,12 +57,11 @@ app.get("/api/:date", (req,res)=>{
   const {date} = req.params;
   const validDate = isValidDate(date);
   if (validDate) {
-    const unixStamp = Math.floor(validDate.getTime() / 1000);
-    const dateString = new Date(unixStamp);
+    const unixStamp = Math.floor(validDate.getTime());
     if (unixStamp) {
       return res.json({
         "unix": unixStamp,
-        "utc": dateString.toUTCString()
+        "utc": validDate.toUTCString()
       })
     } else {
       return res.json({
@@ -75,6 +74,7 @@ app.get("/api/:date", (req,res)=>{
     });
   }
 });
+
 
 
 // listen for requests :)

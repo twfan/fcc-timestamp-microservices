@@ -24,6 +24,56 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+function isValidDate(d) {
+  if (!isNaN(d)) {
+    const miliseconds =  d * 1000;
+    const dateObject = new Date(miliseconds)
+    if (dateObject instanceof Date) {
+      return dateObject;
+    }else {
+      return false;
+    }
+  } else {
+    const dateObject = new Date(d);
+    if (dateObject instanceof Date) {
+      return dateObject;
+    } else {
+      return false;
+    }
+  }
+}
+
+
+app.get("/api", (req,res)=>{
+  const validDate = new Date();
+    const unixStamp = Math.floor(validDate.getTime());
+    return res.json({
+      "unix": unixStamp,
+      "utc": validDate.toUTCString()
+    })
+})
+
+app.get("/api/:date", (req,res)=>{
+  const {date} = req.params;
+  const validDate = isValidDate(date);
+  if (validDate) {
+    const unixStamp = Math.floor(validDate.getTime());
+    if (unixStamp) {
+      return res.json({
+        "unix": unixStamp,
+        "utc": validDate.toUTCString()
+      })
+    } else {
+      return res.json({
+        "error": "Invalid Date"
+      });
+    }
+  } else {
+    return res.json({
+      "error": "Invalid Date"
+    });
+  }
+});
 
 
 // listen for requests :)

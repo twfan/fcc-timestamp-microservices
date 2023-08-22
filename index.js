@@ -2,6 +2,7 @@
 // where your node app starts
 
 // init project
+require('dotenv').config();
 var express = require('express');
 var app = express();
 
@@ -26,8 +27,8 @@ app.get("/api/hello", function (req, res) {
 
 function isValidDate(d) {
   if (!isNaN(d)) {
-    const miliseconds =  d * 1000;
-    const dateObject = new Date(miliseconds)
+    const miliseconds =  d * 1;
+    const dateObject = new Date(miliseconds);
     if (dateObject instanceof Date) {
       return dateObject;
     }else {
@@ -44,34 +45,35 @@ function isValidDate(d) {
 }
 
 
-app.get("/api", (req,res)=>{
-  const validDate = new Date();
-    const unixStamp = Math.floor(validDate.getTime());
-    return res.json({
-      "unix": unixStamp,
-      "utc": validDate.toUTCString()
-    })
-})
 
-app.get("/api/:date", (req,res)=>{
+app.get("/api/:date?", (req,res)=>{
   const {date} = req.params;
-  const validDate = isValidDate(date);
-  if (validDate) {
-    const unixStamp = Math.floor(validDate.getTime());
-    if (unixStamp) {
-      return res.json({
-        "unix": unixStamp,
-        "utc": validDate.toUTCString()
-      })
+  if (date !== undefined) {
+    const validDate = isValidDate(date);
+    if (validDate) {
+      const unixStamp = Math.floor(validDate.getTime());
+      if (unixStamp) {
+        return res.json({
+          "unix": unixStamp,
+          "utc": validDate.toUTCString()
+        })
+      } else {
+        return res.json({
+          "error": "Invalid Date"
+        });
+      }
     } else {
       return res.json({
         "error": "Invalid Date"
       });
     }
   } else {
+    const validDate = new Date();
+    const unixStamp = Math.floor(validDate.getTime());
     return res.json({
-      "error": "Invalid Date"
-    });
+      "unix": unixStamp,
+      "utc": validDate.toUTCString()
+    })
   }
 });
 
